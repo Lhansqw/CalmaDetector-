@@ -1,14 +1,15 @@
-*.iml
-.gradle
-/local.properties
-/.idea/workspace.xml
-/.idea/libraries
-/.idea/modules.xml
-/.idea/deploymentTargetSelector.xml
-/.idea/deviceManager.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# Gradle build outputs & cache
+.gradle/
+build/
+
+# Local environment configuration
 local.properties
+
+# IDE & Kotlin temporary files
+.idea/
+*.iml
+.kotlin/
+
+# OS generated files
+.DS_Store
+Thumbs.db
