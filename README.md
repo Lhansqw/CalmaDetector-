@@ -1,4 +1,4 @@
-# 🧘 CalmaDetector
+#  CalmaDetector
 
 > **Sistema de Detección de Estrés y Ansiedad en Tiempo Real** para dispositivos **Android** y **Wear OS**.
 
@@ -6,16 +6,16 @@
 
 ---
 
-## 📱 Características Principales
+##  Características Principales
 
-### 📱 Panel Móvil (Smartphone Dashboard)
+###  Panel Móvil (Smartphone Dashboard)
 - **Monitoreo en Tiempo Real**: Visualización dinámica de BPM, HRV (ms) e indicador de movimiento.
 - **Indicador de Estado Animado**: Animaciones de pulso y estados diferenciados por color (Calma, Estrés Leve, Ansiedad Inminente).
 - **Línea Base Adaptativa**: Entrenamiento dinámico de la frecuencia cardíaca de reposo del usuario.
 - **Simulador de Escenarios**: Permite probar la respuesta del algoritmo ante reposo, ejercicio físico, estrés silencioso o recuperación.
 - **Calibración y Retroalimentación**: Ajuste de sensibilidad del detector con base en la respuesta del usuario (falsa alarma / confirmación de ansiedad).
 
-### ⌚ Aplicación Wear OS (Smartwatch)
+###  Aplicación Wear OS (Smartwatch)
 - **Diseño Nativo Wear Compose Material 3**: Adaptado especialmente para pantallas redondas (**Wear OS XL Round**).
 - **`ScreenScaffold` & `TimeText`**: Texto de hora curvado siguiendo el borde superior circular del reloj.
 - **Desplazamiento fluido con `TransformingLazyColumn`**: Efecto de transformación y escalado al navegar por la lista o usar la corona rotatoria.
@@ -23,7 +23,7 @@
 
 ---
 
-## 🛠️ Arquitectura y Tecnologías
+##  Arquitectura y Tecnologías
 
 - **Lenguaje**: Kotlin 2.1.10
 - **UI Framework**:
@@ -36,7 +36,7 @@
 
 ---
 
-## 📂 Estructura del Proyecto
+##  Estructura del Proyecto
 
 ```text
 com.example.calma/
@@ -57,7 +57,7 @@ com.example.calma/
 
 ---
 
-## 🚀 Instalación y Ejecución
+##  Instalación y Ejecución
 
 ### Requisitos Previos
 - **Android Studio** Ladybug (2024.2) o superior.
@@ -78,6 +78,6 @@ com.example.calma/
 
 ---
 
-## 📄 Licencia
+##  Licencia
 
 Proyecto desarrollado con fines educativos y de demostración.
