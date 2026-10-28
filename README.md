@@ -21,6 +21,19 @@
 - **Desplazamiento fluido con `TransformingLazyColumn`**: Efecto de transformación y escalado al navegar por la lista o usar la corona rotatoria.
 - **Diseño "De un vistazo"**: Métricas rápidas de BPM, HRV y movimiento organizadas en un panel horizontal fácil de leer mientras se usa el reloj.
 
+### 🔐 Inicio de sesión con código (vinculación reloj ↔ teléfono)
+Para no tener que escribir contraseñas en el reloj:
+
+1. Al abrir la app en el reloj por primera vez aparece un **código de 6 dígitos** (por ejemplo `482 913`).
+2. En el teléfono, en la tarjeta **⌚ Reloj vinculado**, se escribe ese código y se pulsa **Vincular**.
+3. El reloj valida el código y abre el panel. Ambos dispositivos guardan la vinculación.
+
+Detalles:
+- La comunicación es directa por Bluetooth con la **Wearable Data Layer** (`MessageClient`), sin servidor ni internet.
+- El código caduca a los **5 minutos**, es de **un solo uso** y se invalida tras **5 intentos fallidos**.
+- Se puede **desvincular** desde cualquiera de los dos dispositivos; el otro se entera automáticamente.
+- Requisito: el reloj debe estar emparejado con el teléfono (app Wear OS / Galaxy Wearable) y ambos deben tener instalada esta misma APK, firmada con la misma clave.
+
 ---
 
 ##  Arquitectura y Tecnologías
@@ -41,15 +54,22 @@
 ```text
 com.example.calma/
 ├── detection/
-│   ├── Baseline.kt          # Cálculo dinámico de media y desviación estándar
-│   ├── StressDetector.kt    # Algoritmo de clasificación de niveles de alerta
+│   ├── StressDetector.kt    # Línea base (Welford), z-scores y clasificación de alertas
 │   └── Main.kt              # Simulador de datos por consola
+├── pairing/
+│   ├── PairingCodeManager.kt   # Genera y valida códigos de un solo uso
+│   ├── PairingProtocol.kt      # Mensajes reloj ↔ teléfono (Data Layer)
+│   ├── PairingStore.kt         # Guarda el dispositivo vinculado
+│   ├── WatchPairingViewModel.kt # Lado del reloj: muestra y valida el código
+│   └── PhonePairingViewModel.kt # Lado del teléfono: envía el código
 └── ui/
     ├── CalmaDashboardScreen.kt # Interfaz para Smartphones (Material 3)
+    ├── WatchPairingCard.kt     # Tarjeta del teléfono para introducir el código
     ├── CalmaWearApp.kt         # Interfaz para Wear OS (Wear Compose M3)
+    ├── WearPairingScreen.kt    # Pantalla del reloj que muestra el código
     ├── CalmaViewModel.kt       # ViewModel y gestión de estado (StateFlow)
-    ├── MainActivity.kt         # Actividad principal para Smartphone
-    ├── WearActivity.kt         # Actividad principal para Wear OS
+    ├── MainActivity.kt         # Punto de entrada único (redirige al reloj si corresponde)
+    ├── WearActivity.kt         # Inicio de sesión + panel en Wear OS
     └── theme/
         ├── Color.kt            # Paleta de colores (CyanPrimary, Slate, Status)
         └── Theme.kt            # Proveedor unificado de CalmaTheme (Phone + Wear)
@@ -72,9 +92,9 @@ com.example.calma/
    ```
 2. Abrir el proyecto en **Android Studio**.
 3. Sincronizar las dependencias con **Gradle Sync**.
-4. Seleccionar el objetivo de ejecución:
-   - Para **Móvil**: Seleccionar el dispositivo/emulador móvil y ejecutar `MainActivity`.
-   - Para **Wear OS**: Seleccionar el emulador de reloj (`Wear OS XL Round`) y ejecutar `WearActivity`.
+4. Ejecutar la configuración `app` en el dispositivo deseado. Hay un solo icono: `MainActivity` detecta si corre en un reloj y abre la interfaz de Wear OS automáticamente.
+5. Para probar la vinculación con emuladores, emparejar el emulador de reloj con el de teléfono desde **Tools → Device Manager → Pair Wearable** e instalar la app en ambos.
+6. Tests unitarios: `./gradlew testDebugUnitTest`.
 
 ---
 

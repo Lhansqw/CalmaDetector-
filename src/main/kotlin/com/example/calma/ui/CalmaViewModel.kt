@@ -100,8 +100,8 @@ class CalmaViewModel : ViewModel() {
 
     fun sendFeedback(wasAnxiety: Boolean) {
         detector.onUserFeedback(wasAnxiety)
-        val newSensitivity = if (wasAnxiety) 0.95 else 1.10
-        _uiState.update { it.copy(sensitivity = newSensitivity) }
+        // Antes se mostraba un valor fijo (0.95 / 1.10); ahora se refleja el ajuste acumulado real.
+        _uiState.update { it.copy(sensitivity = detector.currentSensitivity) }
     }
 
     fun resetDetector() {
@@ -132,6 +132,7 @@ class CalmaViewModel : ViewModel() {
         val currentAlertLog = _uiState.value.alertLog.toMutableList()
         if (newAlert != AlertLevel.NONE) {
             currentAlertLog.add(0, AlertEvent(simulatedTimeMs, newAlert, sample.bpm, scenario.displayName))
+            if (currentAlertLog.size > MAX_ALERT_LOG) currentAlertLog.removeAt(currentAlertLog.lastIndex)
         }
 
         val updatedHistory = (_uiState.value.sampleHistory + sample).takeLast(20)
@@ -140,7 +141,9 @@ class CalmaViewModel : ViewModel() {
         _uiState.update { state ->
             state.copy(
                 latestSample = sample,
-                currentAlert = newAlert,
+                // El estado visible es el nivel actual del detector; newAlert solo indica
+                // cuándo se dispara una alerta nueva (devuelve NONE durante el cooldown).
+                currentAlert = detector.currentLevel,
                 baselineReady = baseline.isReady,
                 baselineProgress = (baseline.bpm.n.toFloat() / 60f).coerceAtMost(1.0f),
                 baselineMeanBpm = baseline.bpm.mean,
@@ -161,5 +164,9 @@ class CalmaViewModel : ViewModel() {
                 baselineMeanHrv = baseline.hrv.mean
             )
         }
+    }
+
+    private companion object {
+        const val MAX_ALERT_LOG = 50
     }
 }

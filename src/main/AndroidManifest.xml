@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-feature android:name="android.hardware.type.watch" />
+    <!-- La misma APK funciona en teléfono y reloj: el reloj no es obligatorio. -->
+    <uses-feature
+        android:name="android.hardware.type.watch"
+        android:required="false" />
 
+    <!-- allowBackup=false: la vinculación depende de los dispositivos concretos y no debe restaurarse en otro equipo. -->
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:label="CalmaDetector"
@@ -15,6 +19,7 @@
             android:name="com.google.android.wearable.standalone"
             android:value="true" />
 
+        <!-- Único icono en el lanzador; redirige a WearActivity cuando corre en un reloj. -->
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
@@ -28,14 +33,9 @@
 
         <activity
             android:name=".ui.WearActivity"
-            android:exported="true"
+            android:exported="false"
             android:taskAffinity=""
-            android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@android:style/Theme.DeviceDefault.NoActionBar" />
     </application>
 
 </manifest>

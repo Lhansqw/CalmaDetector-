@@ -90,6 +90,11 @@ class StressDetector(
     /** 1.0 = normal; >1 = menos sensible (tras "no fue ansiedad"); <1 = más sensible. */
     private var sensitivity = 1.0
 
+    /** Nivel en el que está el usuario ahora (aunque la alerta no se repita por el cooldown). */
+    val currentLevel: AlertLevel get() = current
+
+    val currentSensitivity: Double get() = sensitivity
+
     /** Procesa una muestra y devuelve el nivel de alerta que debe dispararse (o NONE). */
     fun onSample(s: Sample): AlertLevel {
         // 1) Aprender línea base solo en reposo y mientras no estemos en alerta
@@ -147,8 +152,13 @@ class StressDetector(
         sensitivity = if (wasAnxiety) max(0.8, sensitivity - 0.05) else minOf(1.5, sensitivity + 0.1)
     }
 
-    /** Activación manual: ignora el algoritmo (el UI debe lanzar la intervención directamente). */
-    fun resetState() { current = AlertLevel.NONE; window.clear() }
+    /** Reinicia el estado y los cooldowns (la línea base aprendida se conserva). */
+    fun resetState() {
+        current = AlertLevel.NONE
+        window.clear()
+        lastL1Ms = Long.MIN_VALUE / 2
+        lastL2Ms = Long.MIN_VALUE / 2
+    }
 
     private fun bpmZ(s: Sample) = baseline.bpmZ(s.bpm)
 

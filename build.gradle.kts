@@ -53,8 +53,11 @@ dependencies {
     implementation("androidx.wear.compose:compose-foundation:1.5.0-alpha05")
     implementation("androidx.wear.compose:compose-ui-tooling:1.4.1")
     implementation("com.google.android.gms:play-services-wearable:19.0.0")
+    // Task.await() para usar la Wearable Data Layer con corrutinas
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
 
     testImplementation(kotlin("test"))
+    testImplementation("junit:junit:4.13.2")
 }

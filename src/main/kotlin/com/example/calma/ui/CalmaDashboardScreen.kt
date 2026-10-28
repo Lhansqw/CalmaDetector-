@@ -38,8 +38,9 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.calma.pairing.PhonePairingViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -65,9 +66,11 @@ import java.util.Locale
 
 @Composable
 fun CalmaDashboardScreen(
-    viewModel: CalmaViewModel
+    viewModel: CalmaViewModel,
+    pairingViewModel: PhonePairingViewModel
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val pairing by pairingViewModel.state.collectAsStateWithLifecycle()
 
     Scaffold(
         containerColor = DarkBackground
@@ -86,6 +89,14 @@ fun CalmaDashboardScreen(
                 onToggleSimulation = {
                     if (state.isSimulationRunning) viewModel.pauseSimulation() else viewModel.startSimulation()
                 }
+            )
+
+            // Vinculación con el reloj (el usuario escribe el código que muestra el reloj)
+            WatchPairingCard(
+                state = pairing,
+                onCodeChange = pairingViewModel::onCodeChange,
+                onSubmit = pairingViewModel::submitCode,
+                onUnpair = pairingViewModel::unpair
             )
 
             // Tarjeta principal de Estado con pulso animado
@@ -486,7 +497,10 @@ private fun ScenarioSimulatorCard(
 @Composable
 fun CalmaDashboardPreview() {
     com.example.calma.ui.theme.CalmaTheme {
-        CalmaDashboardScreen(viewModel = androidx.lifecycle.viewmodel.compose.viewModel())
+        CalmaDashboardScreen(
+            viewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+            pairingViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+        )
     }
 }
 
@@ -599,7 +613,7 @@ private fun AlertLogCard(
                         ) {
                             Column {
                                 Text(
-                                    text = alert.level.name,
+                                    text = if (alert.level == AlertLevel.LEVEL_2_IMMINENT) "Ansiedad inminente" else "Estrés leve",
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = if (alert.level == AlertLevel.LEVEL_2_IMMINENT) StatusImminent else StatusMild
