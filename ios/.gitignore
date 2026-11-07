@@ -1,0 +1,12 @@
+# Generado por XcodeGen (se recrea con `xcodegen`)
+*.xcodeproj/
+Phone/Info.plist
+Watch/Info.plist
+Watch/CalmaWatch.entitlements
+
+# Xcode / SwiftPM
+DerivedData/
+xcuserdata/
+.build/
+.swiftpm/
+*.xcuserstate

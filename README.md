@@ -1,6 +1,6 @@
 #  CalmaDetector
 
-> **Sistema de Detección de Estrés y Ansiedad en Tiempo Real** para dispositivos **Android** y **Wear OS**.
+> **Sistema de Detección de Estrés y Ansiedad en Tiempo Real** para dispositivos **Android** y **Wear OS**, y también **iPhone** y **Apple Watch** (ver [`ios/`](ios/README.md)).
 
 **CalmaDetector** es una aplicación multiplataforma (Móvil + Reloj Inteligente) que analiza datos biométricos como Frecuencia Cardíaca (**BPM**), Variabilidad del Ritmo Cardíaco (**HRV**) y Movimiento en tiempo real. Mediante un algoritmo de **Línea Base Dinámica** y cálculo de puntuación Z (*Z-Score*), detecta episodios de estrés leve o ansiedad inminente antes de que se intensifiquen, ofreciendo pautas de respiración guiada (4-7-8) e interfaz de calibración.
 
@@ -33,6 +33,11 @@ Detalles:
 - El código caduca a los **5 minutos**, es de **un solo uso** y se invalida tras **5 intentos fallidos**.
 - Se puede **desvincular** desde cualquiera de los dos dispositivos; el otro se entera automáticamente.
 - Requisito: el reloj debe estar emparejado con el teléfono (app Wear OS / Galaxy Wearable) y ambos deben tener instalada esta misma APK, firmada con la misma clave.
+
+###  iPhone + Apple Watch
+La carpeta [`ios/`](ios/README.md) contiene la versión nativa en Swift/SwiftUI: app de iPhone, app de Apple Watch
+y el mismo detector y vinculación por código (con WatchConnectivity). En el reloj se puede usar el simulador
+o el pulso real de HealthKit. Se compila en una Mac con Xcode; los pasos están en [`ios/README.md`](ios/README.md).
 
 ---
 
