@@ -103,6 +103,3 @@ com.example.calma/
 
 ---
 
-##  Licencia
-
-Proyecto desarrollado con fines educativos y de demostración.
