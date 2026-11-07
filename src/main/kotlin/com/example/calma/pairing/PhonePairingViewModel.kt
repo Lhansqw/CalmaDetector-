@@ -63,7 +63,7 @@ class PhonePairingViewModel(app: Application) : AndroidViewModel(app),
             try {
                 val nodes = nodeClient.connectedNodes.await()
                 if (nodes.isEmpty()) {
-                    showError("No hay ningún reloj conectado. Revisa el Bluetooth y la app Wear OS.")
+                    showError("No hay ningún reloj conectado. Empareja el reloj en la app Wear OS y vuelve a intentarlo.")
                     return@launch
                 }
 
@@ -110,7 +110,7 @@ class PhonePairingViewModel(app: Application) : AndroidViewModel(app),
                     else -> showError("El reloj no respondió. Abre CalmaDetector en el reloj e inténtalo de nuevo.")
                 }
             } catch (e: ApiException) {
-                showError("Wear OS no está disponible en este teléfono (${e.statusCode}).")
+                showError("Este teléfono aún no puede hablar con relojes. Instala la app \"Wear OS\" de Google Play y empareja el reloj desde ella (código ${e.statusCode}).")
             } finally {
                 responses = null
                 channel.close()

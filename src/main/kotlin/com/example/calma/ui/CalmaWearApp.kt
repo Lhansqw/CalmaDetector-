@@ -2,7 +2,6 @@ package com.example.calma.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,14 +11,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
 import androidx.wear.compose.material3.AppScaffold
@@ -34,6 +33,7 @@ import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.TimeText
 import androidx.wear.compose.ui.tooling.preview.WearPreviewLargeRound
+import androidx.wear.compose.ui.tooling.preview.WearPreviewSmallRound
 import com.example.calma.detection.AlertLevel
 import com.example.calma.ui.theme.CalmaTheme
 import com.example.calma.ui.theme.CyanPrimary
@@ -52,6 +52,7 @@ fun CalmaWearApp(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val columnState = rememberTransformingLazyColumnState()
+    val d = rememberWearDimens()
 
     AppScaffold {
         ScreenScaffold(
@@ -60,27 +61,26 @@ fun CalmaWearApp(
             content = {
                 TransformingLazyColumn(
                     state = columnState,
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 28.dp),
+                    contentPadding = d.listPadding,
                     modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(d.itemSpacing)
                 ) {
-                    // 1. Header Título
+                    // 1. Título
                     item {
-                        ListHeader(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
+                        ListHeader(modifier = Modifier.fillMaxWidth()) {
                             Text(
                                 text = "CalmaDetector",
-                                fontSize = 15.sp,
+                                fontSize = d.sp(15f),
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary,
                                 textAlign = TextAlign.Center,
+                                maxLines = 1,
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
                     }
 
-                    // 2. Tarjeta Principal de Estado de Estrés
+                    // 2. Estado de estrés
                     item {
                         val (statusColor, statusTitle, icon) = when (state.currentAlert) {
                             AlertLevel.NONE -> Triple(StatusCalm, "Estado Normal", "🧘")
@@ -96,14 +96,14 @@ fun CalmaWearApp(
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 4.dp),
+                                    .padding(vertical = 2.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Text(text = icon, fontSize = 32.sp)
+                                Text(text = icon, fontSize = d.sp(if (d.isSmall) 26f else 30f))
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
                                     text = statusTitle,
-                                    fontSize = 15.sp,
+                                    fontSize = d.sp(15f),
                                     fontWeight = FontWeight.Bold,
                                     color = statusColor,
                                     textAlign = TextAlign.Center
@@ -112,7 +112,7 @@ fun CalmaWearApp(
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
                                         text = "🧘 Inicia respiración 4-7-8",
-                                        fontSize = 11.sp,
+                                        fontSize = d.sp(11f),
                                         color = TextPrimary,
                                         textAlign = TextAlign.Center
                                     )
@@ -121,60 +121,25 @@ fun CalmaWearApp(
                         }
                     }
 
-                    // 3. Tarjeta de Métricas Rápidas (BPM, HRV, Movimiento)
+                    // 3. Métricas rápidas (BPM, HRV, movimiento)
                     item {
-                        Card(
-                            onClick = {},
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
+                        Card(onClick = {}, modifier = Modifier.fillMaxWidth()) {
                             Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 2.dp),
-                                horizontalArrangement = Arrangement.SpaceAround,
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Text(
-                                        text = "❤️ ${state.latestSample.bpm.toInt()}",
-                                        fontSize = 15.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = TextPrimary
-                                    )
-                                    Text(text = "BPM", fontSize = 10.sp, color = TextSecondary)
-                                }
-
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Text(
-                                        text = "🌊 ${state.latestSample.hrvMs?.toInt() ?: "--"}",
-                                        fontSize = 15.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = TextPrimary
-                                    )
-                                    Text(text = "HRV (ms)", fontSize = 10.sp, color = TextSecondary)
-                                }
-
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Text(
-                                        text = if (state.latestSample.motion > 1.0) "🏃" else "🧘",
-                                        fontSize = 15.sp
-                                    )
-                                    Text(
-                                        text = if (state.latestSample.motion > 1.0) "Activo" else "Quieto",
-                                        fontSize = 10.sp,
-                                        color = TextSecondary
-                                    )
-                                }
+                                WearMetric(d, value = "${state.latestSample.bpm.toInt()}", label = "BPM", color = TextPrimary)
+                                WearMetric(d, value = "${state.latestSample.hrvMs?.toInt() ?: "--"}", label = "HRV ms", color = TextPrimary)
+                                val active = state.latestSample.motion > 1.0
+                                WearMetric(d, value = if (active) "🏃" else "🧘", label = if (active) "Activo" else "Quieto", color = TextPrimary)
                             }
                         }
                     }
 
-                    // 4. Progreso de Línea Base
+                    // 4. Línea base
                     item {
-                        Card(
-                            onClick = {},
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
+                        Card(onClick = {}, modifier = Modifier.fillMaxWidth()) {
                             Column(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -184,12 +149,13 @@ fun CalmaWearApp(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text(text = "🎯 Línea Base", fontSize = 11.sp, color = TextSecondary)
+                                    Text(text = "Línea base", fontSize = d.sp(11f), color = TextSecondary, maxLines = 1)
                                     Text(
-                                        text = if (state.baselineReady) "Lista (${state.baselineMeanBpm.toInt()} BPM)" else "${(state.baselineProgress * 100).toInt()}%",
-                                        fontSize = 11.sp,
+                                        text = if (state.baselineReady) "${state.baselineMeanBpm.toInt()} BPM" else "${(state.baselineProgress * 100).toInt()}%",
+                                        fontSize = d.sp(11f),
                                         fontWeight = FontWeight.Bold,
-                                        color = if (state.baselineReady) StatusCalm else StatusMild
+                                        color = if (state.baselineReady) StatusCalm else StatusMild,
+                                        maxLines = 1
                                     )
                                 }
                                 LinearProgressIndicator(
@@ -204,20 +170,9 @@ fun CalmaWearApp(
                         }
                     }
 
-                    // 5. Header de Escenarios
-                    item {
-                        ListHeader(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = "Simular Escenario",
-                                fontSize = 12.sp,
-                                color = TextSecondary
-                            )
-                        }
-                    }
+                    // 5. Escenarios
+                    item { WearSectionHeader(d, "Simular escenario") }
 
-                    // 6. Botones de Selección de Escenario
                     SimulationScenario.entries.forEach { scenario ->
                         item {
                             Button(
@@ -231,7 +186,7 @@ fun CalmaWearApp(
                             ) {
                                 Text(
                                     text = scenario.displayName,
-                                    fontSize = 12.sp,
+                                    fontSize = d.sp(12f),
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
@@ -239,18 +194,8 @@ fun CalmaWearApp(
                         }
                     }
 
-                    // 7. Header Retroalimentación
-                    item {
-                        ListHeader(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = "Calibración",
-                                fontSize = 12.sp,
-                                color = TextSecondary
-                            )
-                        }
-                    }
+                    // 6. Calibración
+                    item { WearSectionHeader(d, "Calibración") }
 
                     item {
                         Button(
@@ -258,7 +203,7 @@ fun CalmaWearApp(
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(containerColor = StatusMild)
                         ) {
-                            Text("Sí, sentí ansiedad", fontSize = 11.sp)
+                            Text("Sí, sentí ansiedad", fontSize = d.sp(12f), maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
                     }
 
@@ -268,7 +213,7 @@ fun CalmaWearApp(
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.filledTonalButtonColors()
                         ) {
-                            Text("Fue falsa alarma", fontSize = 11.sp)
+                            Text("Fue falsa alarma", fontSize = d.sp(12f), maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
                     }
 
@@ -277,27 +222,36 @@ fun CalmaWearApp(
                             onClick = { viewModel.resetDetector() },
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(containerColor = StatusImminent),
-                            label = { Text("Restablecer Estado", fontSize = 11.sp) }
+                            label = {
+                                Text(
+                                    "Restablecer estado",
+                                    fontSize = d.sp(11f),
+                                    color = TextPrimary,
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 1,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
                         )
                     }
 
-                    // 8. Sesión: teléfono vinculado
+                    // 7. Sesión: teléfono vinculado
                     if (pairedPhoneName != null) {
-                        item {
-                            ListHeader(modifier = Modifier.fillMaxWidth()) {
-                                Text(text = "Sesión", fontSize = 12.sp, color = TextSecondary)
-                            }
-                        }
+                        item { WearSectionHeader(d, "Sesión") }
                         item {
                             Text(
                                 text = "📱 Vinculado con $pairedPhoneName",
-                                fontSize = 11.sp,
+                                fontSize = d.sp(11f),
                                 color = TextPrimary,
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = d.textInset)
                             )
                         }
-                        item { WearUnpairButton(onUnpair = onUnpair) }
+                        item { WearUnpairButton(d, onUnpair = onUnpair) }
                     }
                 }
             }
@@ -305,9 +259,32 @@ fun CalmaWearApp(
     }
 }
 
+@Composable
+private fun WearMetric(d: WearDimens, value: String, label: String, color: Color) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(text = value, fontSize = d.sp(16f), fontWeight = FontWeight.Bold, color = color, maxLines = 1)
+        Text(text = label, fontSize = d.sp(10f), color = TextSecondary, maxLines = 1)
+    }
+}
+
+@Composable
+internal fun WearSectionHeader(d: WearDimens, title: String) {
+    ListHeader(modifier = Modifier.fillMaxWidth()) {
+        Text(text = title, fontSize = d.sp(12f), color = TextSecondary, maxLines = 1)
+    }
+}
+
 @WearPreviewLargeRound
 @Composable
 fun CalmaWearAppPreview() {
+    CalmaTheme {
+        CalmaWearApp(viewModel = androidx.lifecycle.viewmodel.compose.viewModel(), pairedPhoneName = "Pixel 8")
+    }
+}
+
+@WearPreviewSmallRound
+@Composable
+fun CalmaWearAppSmallPreview() {
     CalmaTheme {
         CalmaWearApp(viewModel = androidx.lifecycle.viewmodel.compose.viewModel(), pairedPhoneName = "Pixel 8")
     }
