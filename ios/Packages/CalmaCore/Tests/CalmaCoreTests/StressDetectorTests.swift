@@ -36,6 +36,18 @@ final class StressDetectorTests: XCTestCase {
         XCTAssertEqual(d.currentLevel, .level2Imminent)                  // pero el estado sigue activo
     }
 
+    func testEpisodiosRepetidosDeEstresNoContaminanLaLineaBase() {
+        let baseline = Baseline(minSamples: 100)
+        let d = StressDetector(baseline: baseline)
+        _ = feed(d, 120, bpm: 65, hrv: 50, motion: 0.05)
+        for _ in 0..<3 {
+            let alerts = feed(d, 30, bpm: 100, hrv: 22, motion: 0.05)
+            XCTAssertTrue(alerts.contains(.level2Imminent))
+            _ = feed(d, 40, bpm: 66, hrv: 48, motion: 0.05)
+        }
+        XCTAssertEqual(baseline.bpm.mean, 65, accuracy: 1.5)
+    }
+
     func testLaSensibilidadSeAcumulaYTieneLimites() {
         let d = trainedDetector()
         for _ in 0..<20 { d.onUserFeedback(wasAnxiety: false) }

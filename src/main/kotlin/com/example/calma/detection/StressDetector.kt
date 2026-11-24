@@ -97,8 +97,10 @@ class StressDetector(
 
     /** Procesa una muestra y devuelve el nivel de alerta que debe dispararse (o NONE). */
     fun onSample(s: Sample): AlertLevel {
-        // 1) Aprender línea base solo en reposo y mientras no estemos en alerta
-        if (current == AlertLevel.NONE) baseline.learn(s, cfg.restMotionMax)
+        // 1) Aprender línea base solo en reposo y mientras no estemos en alerta. Con la base lista,
+        //    tampoco se aprende un pulso ya elevado: si no, el estrés previo a la alerta la contamina.
+        val elevated = baseline.isReady && bpmZ(s) >= cfg.l1EnterZ * sensitivity
+        if (current == AlertLevel.NONE && !elevated) baseline.learn(s, cfg.restMotionMax)
 
         // 2) Mantener ventana
         window.addLast(s)

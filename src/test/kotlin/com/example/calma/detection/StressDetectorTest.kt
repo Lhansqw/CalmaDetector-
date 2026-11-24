@@ -38,6 +38,19 @@ class StressDetectorTest {
     }
 
     @Test
+    fun `episodios repetidos de estres no contaminan la linea base`() {
+        val baseline = Baseline(minSamples = 100)
+        val d = StressDetector(baseline)
+        feed(d, 120, bpm = 65.0, hrv = 50.0, motion = 0.05)
+        repeat(3) {
+            val alerts = feed(d, 30, bpm = 100.0, hrv = 22.0, motion = 0.05)
+            assertTrue(alerts.contains(AlertLevel.LEVEL_2_IMMINENT))
+            feed(d, 40, bpm = 66.0, hrv = 48.0, motion = 0.05)
+        }
+        assertEquals(65.0, baseline.bpm.mean, 1.5)
+    }
+
+    @Test
     fun `la sensibilidad se acumula y tiene limites`() {
         val d = trainedDetector()
         repeat(20) { d.onUserFeedback(wasAnxiety = false) }
