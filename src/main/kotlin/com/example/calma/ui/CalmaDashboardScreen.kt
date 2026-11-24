@@ -39,6 +39,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.calma.pairing.PhonePairingViewModel
 import androidx.compose.ui.Alignment
@@ -46,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -62,7 +64,6 @@ import com.example.calma.ui.theme.TextPrimary
 import com.example.calma.ui.theme.TextSecondary
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 @Composable
 fun CalmaDashboardScreen(
@@ -598,7 +599,8 @@ private fun AlertLogCard(
                     color = TextSecondary
                 )
             } else {
-                val dateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                val locale = LocalConfiguration.current.locales[0]
+                val dateFormat = remember(locale) { SimpleDateFormat("HH:mm:ss", locale) }
                 Column(
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
