@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.calma"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.example.calma"
@@ -34,23 +34,23 @@ android {
 }
 
 dependencies {
-    implementation(platform("androidx.compose:compose-bom:2024.12.01"))
+    implementation(platform("androidx.compose:compose-bom:2026.09.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-    implementation("androidx.activity:activity-compose:1.9.3")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
-    implementation("androidx.core:core-ktx:1.15.0")
+    implementation("androidx.activity:activity-compose:1.13.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.11.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.11.1")
+    implementation("androidx.core:core-ktx:1.19.1")
 
     // Wear OS Compose Material 3 & Foundation
-    implementation("androidx.wear.compose:compose-material3:1.0.0-alpha28")
-    implementation("androidx.wear.compose:compose-foundation:1.5.0-alpha05")
-    implementation("androidx.wear.compose:compose-ui-tooling:1.4.1")
-    implementation("com.google.android.gms:play-services-wearable:19.0.0")
+    implementation("androidx.wear.compose:compose-material3:1.7.2")
+    implementation("androidx.wear.compose:compose-foundation:1.7.2")
+    implementation("androidx.wear.compose:compose-ui-tooling:1.7.2")
+    implementation("com.google.android.gms:play-services-wearable:20.0.1")
     // Task.await() para usar la Wearable Data Layer con corrutinas
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.11.0")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
 

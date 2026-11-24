@@ -52,7 +52,7 @@ fun WearPairingScreen(
     AppScaffold {
         ScreenScaffold(
             scrollState = columnState,
-            timeText = { TimeText { time() } },
+            timeText = { TimeText() },
             content = {
                 TransformingLazyColumn(
                     state = columnState,
