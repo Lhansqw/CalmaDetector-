@@ -23,6 +23,16 @@ enum class SimulationScenario(val displayName: String, val targetBpm: Double, va
     RECUPERACION("4. Recuperación", 66.0, 48.0, 0.05)
 }
 
+/** Un factor mayor que 1 sube el umbral: la app avisa menos. Menor que 1: avisa antes. */
+fun alertThresholdLabel(sensitivity: Double): String {
+    val effect = when {
+        sensitivity > 1.001 -> "avisa menos"
+        sensitivity < 0.999 -> "avisa antes"
+        else -> "normal"
+    }
+    return "Umbral de alerta: ×%.2f (%s)".format(sensitivity, effect)
+}
+
 data class AlertEvent(
     val timestampMs: Long,
     val level: AlertLevel,
@@ -39,6 +49,8 @@ data class CalmaUiState(
     val baselineMeanHrv: Double = 0.0,
     val bpmZScore: Double = 0.0,
     val sensitivity: Double = 1.0,
+    /** Hay una alerta sin calificar: solo entonces se aceptan "Sí, sentí ansiedad" / "Fue falsa alarma". */
+    val awaitingFeedback: Boolean = false,
     val currentScenario: SimulationScenario = SimulationScenario.REPOSO_NORMAL,
     val sampleHistory: List<Sample> = emptyList(),
     val alertLog: List<AlertEvent> = emptyList(),
@@ -98,10 +110,11 @@ class CalmaViewModel : ViewModel() {
         _uiState.update { it.copy(currentScenario = scenario) }
     }
 
+    /** Una sola calificación por alerta, para que la sensibilidad no se mueva sin motivo. */
     fun sendFeedback(wasAnxiety: Boolean) {
+        if (!_uiState.value.awaitingFeedback) return
         detector.onUserFeedback(wasAnxiety)
-        // Antes se mostraba un valor fijo (0.95 / 1.10); ahora se refleja el ajuste acumulado real.
-        _uiState.update { it.copy(sensitivity = detector.currentSensitivity) }
+        _uiState.update { it.copy(sensitivity = detector.currentSensitivity, awaitingFeedback = false) }
     }
 
     fun resetDetector() {
@@ -109,6 +122,7 @@ class CalmaViewModel : ViewModel() {
         _uiState.update {
             it.copy(
                 currentAlert = AlertLevel.NONE,
+                awaitingFeedback = false,
                 alertLog = emptyList(),
                 sampleHistory = emptyList()
             )
@@ -150,7 +164,8 @@ class CalmaViewModel : ViewModel() {
                 baselineMeanHrv = baseline.hrv.mean,
                 bpmZScore = zScore,
                 sampleHistory = updatedHistory,
-                alertLog = currentAlertLog
+                alertLog = currentAlertLog,
+                awaitingFeedback = state.awaitingFeedback || newAlert != AlertLevel.NONE
             )
         }
     }

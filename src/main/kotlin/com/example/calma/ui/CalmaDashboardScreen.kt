@@ -114,6 +114,7 @@ fun CalmaDashboardScreen(viewModel: CalmaViewModel) {
             // Panel de Retroalimentación del Usuario y Controles
             FeedbackAndControlCard(
                 sensitivity = state.sensitivity,
+                awaitingFeedback = state.awaitingFeedback,
                 onFeedback = { viewModel.sendFeedback(it) },
                 onReset = { viewModel.resetDetector() }
             )
@@ -492,6 +493,7 @@ fun CalmaDashboardPreview() {
 @Composable
 private fun FeedbackAndControlCard(
     sensitivity: Double,
+    awaitingFeedback: Boolean,
     onFeedback: (Boolean) -> Unit,
     onReset: () -> Unit
 ) {
@@ -512,9 +514,15 @@ private fun FeedbackAndControlCard(
                 color = TextPrimary
             )
             Text(
-                text = "Factor de Sensibilidad Actual: ${"%.2f".format(sensitivity)}x",
+                text = alertThresholdLabel(sensitivity),
                 fontSize = 12.sp,
                 color = TextSecondary
+            )
+            Text(
+                text = if (awaitingFeedback) "¿La última alerta fue ansiedad real?"
+                else "Los botones se activan cuando salta una alerta.",
+                fontSize = 12.sp,
+                color = if (awaitingFeedback) StatusMild else TextSecondary
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -526,6 +534,7 @@ private fun FeedbackAndControlCard(
                 Button(
                     onClick = { onFeedback(true) },
                     modifier = Modifier.weight(1f),
+                    enabled = awaitingFeedback,
                     colors = ButtonDefaults.buttonColors(containerColor = StatusMild)
                 ) {
                     Text("Sí, sentí ansiedad", fontSize = 11.sp)
@@ -534,6 +543,7 @@ private fun FeedbackAndControlCard(
                 OutlinedButton(
                     onClick = { onFeedback(false) },
                     modifier = Modifier.weight(1f),
+                    enabled = awaitingFeedback,
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = TextPrimary)
                 ) {
                     Text("Fue falsa alarma", fontSize = 11.sp)

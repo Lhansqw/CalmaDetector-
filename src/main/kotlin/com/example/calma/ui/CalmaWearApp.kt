@@ -193,10 +193,24 @@ fun CalmaWearApp(viewModel: CalmaViewModel) {
                     // 6. Calibración
                     item { WearSectionHeader(d, "Calibración") }
 
+                    if (!state.awaitingFeedback) {
+                        item {
+                            Text(
+                                text = "Se activa tras una alerta",
+                                fontSize = d.sp(10f),
+                                color = TextSecondary,
+                                textAlign = TextAlign.Center,
+                                maxLines = 2,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+
                     item {
                         Button(
                             onClick = { viewModel.sendFeedback(true) },
                             modifier = Modifier.fillMaxWidth(),
+                            enabled = state.awaitingFeedback,
                             colors = ButtonDefaults.buttonColors(containerColor = StatusMild)
                         ) {
                             Text("Sí, sentí ansiedad", fontSize = d.sp(12f), maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -207,6 +221,7 @@ fun CalmaWearApp(viewModel: CalmaViewModel) {
                         Button(
                             onClick = { viewModel.sendFeedback(false) },
                             modifier = Modifier.fillMaxWidth(),
+                            enabled = state.awaitingFeedback,
                             colors = ButtonDefaults.filledTonalButtonColors()
                         ) {
                             Text("Fue falsa alarma", fontSize = d.sp(12f), maxLines = 1, overflow = TextOverflow.Ellipsis)

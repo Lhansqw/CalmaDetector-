@@ -2,6 +2,12 @@ import Foundation
 import Combine
 import CalmaCore
 
+/// Un factor mayor que 1 sube el umbral: la app avisa menos. Menor que 1: avisa antes.
+func alertThresholdLabel(_ sensitivity: Double) -> String {
+    let effect = sensitivity > 1.001 ? "avisa menos" : sensitivity < 0.999 ? "avisa antes" : "normal"
+    return "Umbral de alerta: ×\(String(format: "%.2f", sensitivity)) (\(effect))"
+}
+
 struct AlertEvent: Identifiable {
     let id = UUID()
     let timestampMs: Int64
@@ -37,6 +43,8 @@ final class CalmaViewModel: ObservableObject {
     @Published private(set) var baselineMeanHrv: Double = 0
     @Published private(set) var bpmZScore: Double = 0
     @Published private(set) var sensitivity: Double = 1
+    /// Hay una alerta sin calificar: solo entonces se aceptan "Sí, sentí ansiedad" / "Fue falsa alarma".
+    @Published private(set) var awaitingFeedback = false
     @Published var currentScenario: SimulationScenario = .reposoNormal
     @Published private(set) var sampleHistory: [Sample] = []
     @Published private(set) var alertLog: [AlertEvent] = []
@@ -121,20 +129,25 @@ final class CalmaViewModel: ObservableObject {
         currentAlert = .none
         sampleHistory = []
         alertLog = []
+        awaitingFeedback = false
         bpmZScore = 0
         sensitivity = detector.currentSensitivity
         updateBaselineState()
         start()
     }
 
+    /// Una sola calificación por alerta, para que la sensibilidad no se mueva sin motivo.
     func sendFeedback(wasAnxiety: Bool) {
+        guard awaitingFeedback else { return }
         detector.onUserFeedback(wasAnxiety: wasAnxiety)
         sensitivity = detector.currentSensitivity
+        awaitingFeedback = false
     }
 
     func resetDetector() {
         detector.resetState()
         currentAlert = .none
+        awaitingFeedback = false
         alertLog = []
         sampleHistory = []
     }
@@ -177,6 +190,7 @@ final class CalmaViewModel: ObservableObject {
         if newAlert != .none {
             alertLog.insert(AlertEvent(timestampMs: sample.timestampMs, level: newAlert, bpm: sample.bpm, scenarioName: sourceName), at: 0)
             if alertLog.count > Self.maxAlertLog { alertLog.removeLast() }
+            awaitingFeedback = true
             onAlert?(newAlert)
         }
 

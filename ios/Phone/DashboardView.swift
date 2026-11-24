@@ -118,9 +118,14 @@ struct DashboardView: View {
             Text("💬 Calibración y Retroalimentación")
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(Color.textPrimary)
-            Text("Factor de Sensibilidad Actual: \(String(format: "%.2f", viewModel.sensitivity))x")
+            Text(alertThresholdLabel(viewModel.sensitivity))
                 .font(.system(size: 12))
                 .foregroundStyle(Color.textSecondary)
+            Text(viewModel.awaitingFeedback
+                 ? "¿La última alerta fue ansiedad real?"
+                 : "Los botones se activan cuando salta una alerta.")
+                .font(.system(size: 12))
+                .foregroundStyle(viewModel.awaitingFeedback ? Color.statusMild : Color.textSecondary)
             HStack(spacing: 8) {
                 Button { viewModel.sendFeedback(wasAnxiety: true) } label: {
                     Text("Sí, sentí ansiedad").font(.system(size: 11)).frame(maxWidth: .infinity)
@@ -133,6 +138,7 @@ struct DashboardView: View {
                 .buttonStyle(.bordered)
                 .tint(.textPrimary)
             }
+            .disabled(!viewModel.awaitingFeedback)
             .padding(.top, 4)
             Button(role: .destructive) { viewModel.resetDetector() } label: {
                 Text("Restablecer Estado del Detector").font(.system(size: 12)).frame(maxWidth: .infinity)

@@ -46,12 +46,20 @@ struct WatchDashboardView: View {
                     }
                 }
 
-                Section("Calibración") {
+                Section {
                     Button("Sí, sentí ansiedad") { viewModel.sendFeedback(wasAnxiety: true) }
                         .listRowBackground(RoundedRectangle(cornerRadius: 10).fill(Color.statusMild.opacity(0.7)))
+                        .disabled(!viewModel.awaitingFeedback)
                     Button("Fue falsa alarma") { viewModel.sendFeedback(wasAnxiety: false) }
+                        .disabled(!viewModel.awaitingFeedback)
                     Button("Restablecer estado", role: .destructive) { viewModel.resetDetector() }
                         .font(.footnote)
+                } header: {
+                    Text("Calibración")
+                } footer: {
+                    if !viewModel.awaitingFeedback {
+                        Text("Se activa tras una alerta")
+                    }
                 }
             }
             .navigationTitle("CalmaDetector")
