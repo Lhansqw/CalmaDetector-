@@ -9,6 +9,8 @@
     <!-- allowBackup=false: la vinculación depende de los dispositivos concretos y no debe restaurarse en otro equipo. -->
     <application
         android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:label="CalmaDetector"

@@ -151,7 +151,6 @@ class PhonePairingViewModel(app: Application) : AndroidViewModel(app),
 
     override fun onCleared() {
         messageClient.removeListener(this)
-        super.onCleared()
     }
 
     private companion object {

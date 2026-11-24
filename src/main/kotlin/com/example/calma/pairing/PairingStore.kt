@@ -1,6 +1,7 @@
 package com.example.calma.pairing
 
 import android.content.Context
+import androidx.core.content.edit
 
 /** Dispositivo vinculado guardado en este equipo (en el reloj: el teléfono; en el teléfono: el reloj). */
 data class PairedDevice(
@@ -26,15 +27,15 @@ class PairingStore(context: Context) {
     }
 
     fun save(device: PairedDevice) {
-        prefs.edit()
-            .putString(KEY_NODE, device.nodeId)
-            .putString(KEY_NAME, device.name)
-            .putString(KEY_TOKEN, device.token)
-            .putLong(KEY_AT, device.pairedAtMs)
-            .apply()
+        prefs.edit {
+            putString(KEY_NODE, device.nodeId)
+            putString(KEY_NAME, device.name)
+            putString(KEY_TOKEN, device.token)
+            putLong(KEY_AT, device.pairedAtMs)
+        }
     }
 
-    fun clear() = prefs.edit().clear().apply()
+    fun clear() = prefs.edit { clear() }
 
     private companion object {
         const val KEY_NODE = "node_id"

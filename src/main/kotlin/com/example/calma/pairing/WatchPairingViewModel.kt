@@ -148,6 +148,5 @@ class WatchPairingViewModel(app: Application) : AndroidViewModel(app),
 
     override fun onCleared() {
         messageClient.removeListener(this)
-        super.onCleared()
     }
 }
