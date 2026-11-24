@@ -45,8 +45,19 @@ import com.example.calma.ui.theme.TextPrimary
 import com.example.calma.ui.theme.TextSecondary
 
 @Composable
-fun CalmaWearApp(viewModel: CalmaViewModel) {
+fun CalmaWearApp(viewModel: CalmaViewModel, assistantViewModel: AssistantViewModel? = null) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    // En el reloj solo se muestra el último mensaje del asistente; el chat queda para el teléfono.
+    val assistantMessage = assistantViewModel?.let { vm ->
+        AssistantAlertEffect(state, vm)
+        val assistant by vm.state.collectAsStateWithLifecycle()
+        when {
+            assistant.isThinking -> "…"
+            // El error solo importa si ya hubo una alerta (sin clave, el reloj no muestra nada).
+            assistant.error != null && assistant.enabled -> assistant.error
+            else -> assistant.messages.lastOrNull { !it.fromUser }?.text
+        }
+    }
     val columnState = rememberTransformingLazyColumnState()
     val d = rememberWearDimens()
 
@@ -113,6 +124,19 @@ fun CalmaWearApp(viewModel: CalmaViewModel) {
                                         textAlign = TextAlign.Center
                                     )
                                 }
+                            }
+                        }
+                    }
+
+                    // Mensaje del asistente tras una alerta
+                    if (assistantMessage != null) {
+                        item {
+                            Card(onClick = {}, modifier = Modifier.fillMaxWidth()) {
+                                Text(
+                                    text = "🤖 $assistantMessage",
+                                    fontSize = d.sp(11f),
+                                    color = TextPrimary
+                                )
                             }
                         }
                     }

@@ -29,7 +29,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             CalmaTheme {
                 val viewModel: CalmaViewModel = viewModel()
-                CalmaDashboardScreen(viewModel = viewModel)
+                val assistantViewModel: AssistantViewModel = viewModel()
+                CalmaDashboardScreen(viewModel = viewModel, assistantViewModel = assistantViewModel)
             }
         }
     }

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- El asistente habla con la API de Groq. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <!-- La misma APK funciona en teléfono y reloj: el reloj no es obligatorio. -->
     <uses-feature
         android:name="android.hardware.type.watch"

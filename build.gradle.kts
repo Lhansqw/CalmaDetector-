@@ -1,6 +1,15 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application") version "9.5.2"
     id("org.jetbrains.kotlin.plugin.compose") version "2.4.21"
+}
+
+// Clave de Groq para el asistente, solo para pruebas: se lee de local.properties (no se sube a git)
+// y queda dentro de la APK, así que esa APK no se comparte.
+val groqApiKey: String = Properties().run {
+    rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
+    getProperty("GROQ_API_KEY").orEmpty()
 }
 
 android {
@@ -13,6 +22,7 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+        buildConfigField("String", "GROQ_API_KEY", "\"$groqApiKey\"")
     }
 
     buildTypes {
@@ -30,6 +40,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     lint {
         // La misma APK corre en teléfono y reloj a propósito: el teléfono usa Material 3

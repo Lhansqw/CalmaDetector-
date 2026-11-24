@@ -12,7 +12,8 @@ class WearActivity : ComponentActivity() {
         setContent {
             CalmaTheme {
                 val viewModel: CalmaViewModel = viewModel()
-                CalmaWearApp(viewModel = viewModel)
+                val assistantViewModel: AssistantViewModel = viewModel()
+                CalmaWearApp(viewModel = viewModel, assistantViewModel = assistantViewModel)
             }
         }
     }

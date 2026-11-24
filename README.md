@@ -35,6 +35,18 @@ de que se intensifique, y recomienda la respiración guiada 4-7-8. El movimiento
 - **Apple Watch**: interfaz SwiftUI nativa. Además del simulador, puede usar **sensores reales**:
   pulso en vivo con HealthKit, HRV reciente y acelerómetro. Vibra cuando se dispara una alerta.
 
+### 🤖 Asistente con IA (Android)
+Cuando salta una alerta, el asistente le escribe un mensaje corto a la persona y le propone una técnica concreta
+(respiración 4-7-8, anclaje 5-4-3-2-1, soltar los hombros). En el teléfono se puede seguir la charla; en el reloj
+se ve el último mensaje. No diagnostica ni reemplaza ayuda profesional, y ante una crisis indica llamar a emergencias.
+
+- **Qué se envía**: solo los números de la alerta (pulso, HRV, movimiento, promedio de reposo y nivel) y lo que
+  la persona escriba. No se manda ningún dato de identidad, y la charla no se guarda: se pierde al cerrar la app.
+- **Modelo**: `openai/gpt-oss-120b` en [Groq](https://console.groq.com), por su API compatible con OpenAI (sin dependencias extra).
+- **Clave**: va en `local.properties`. Ver "Instalación". Es una configuración **para pruebas**: la clave queda
+  dentro de la APK, así que esa APK no se comparte. Para publicar la app habría que poner un servidor intermedio
+  que guarde la clave.
+
 ---
 
 ##  Arquitectura y Tecnologías
@@ -66,8 +78,13 @@ CalmaDetector/
 │   ├── detection/
 │   │   ├── StressDetector.kt       # Línea base (Welford), z-scores y clasificación de alertas
 │   │   └── Main.kt                 # Simulador de datos por consola
+│   ├── assistant/
+│   │   ├── AssistantPrompts.kt     # Instrucciones del asistente y contexto de la alerta
+│   │   └── CalmaAssistant.kt       # Llamada a la API de Groq
 │   └── ui/
 │       ├── CalmaDashboardScreen.kt # Interfaz del teléfono (Material 3)
+│       ├── AssistantCard.kt        # Charla con el asistente en el teléfono
+│       ├── AssistantViewModel.kt   # Estado de la charla
 │       ├── CalmaWearApp.kt         # Interfaz de Wear OS (Wear Compose M3)
 │       ├── WearDimens.kt           # Medidas adaptadas al tamaño de pantalla del reloj
 │       ├── CalmaViewModel.kt       # ViewModel y gestión de estado (StateFlow)
@@ -98,9 +115,15 @@ Android 8.0+ (API 26+) y/o un reloj o emulador Wear OS 4+ (API 30+).
    cd CalmaDetector-
    ```
 2. Abrir el proyecto en **Android Studio** y sincronizar con **Gradle Sync**.
-3. Ejecutar la configuración `app`. Hay un solo APK e icono: `MainActivity` detecta si corre en un reloj
+3. (Opcional, para el asistente) Crear una clave en [console.groq.com](https://console.groq.com) → API Keys
+   y agregarla a `local.properties`, en la raíz del proyecto:
+   ```properties
+   GROQ_API_KEY=gsk_...
+   ```
+   Sin la clave, la app funciona igual y la tarjeta del asistente avisa que está apagado.
+4. Ejecutar la configuración `app`. Hay un solo APK e icono: `MainActivity` detecta si corre en un reloj
    y abre la interfaz de Wear OS automáticamente.
-4. Tests unitarios: `./gradlew testDebugUnitTest`.
+5. Tests unitarios: `./gradlew testDebugUnitTest`.
 
 ### iPhone / Apple Watch
 

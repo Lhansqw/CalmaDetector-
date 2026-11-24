@@ -65,8 +65,10 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 @Composable
-fun CalmaDashboardScreen(viewModel: CalmaViewModel) {
+fun CalmaDashboardScreen(viewModel: CalmaViewModel, assistantViewModel: AssistantViewModel) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val assistant by assistantViewModel.state.collectAsStateWithLifecycle()
+    AssistantAlertEffect(state, assistantViewModel)
 
     Scaffold(
         containerColor = DarkBackground
@@ -89,6 +91,14 @@ fun CalmaDashboardScreen(viewModel: CalmaViewModel) {
 
             // Tarjeta principal de Estado con pulso animado
             StatusPulseCard(alertLevel = state.currentAlert, bpmZScore = state.bpmZScore)
+
+            // Asistente (Groq): escribe cuando salta una alerta y se puede seguir la charla
+            AssistantCard(
+                state = assistant,
+                onSend = assistantViewModel::send,
+                onRetry = assistantViewModel::retry,
+                onClear = assistantViewModel::clear
+            )
 
             // Fila de Métricas en tiempo real (BPM, HRV, Movimiento)
             SensorMetricsRow(
@@ -486,7 +496,10 @@ private fun ScenarioSimulatorCard(
 @Composable
 fun CalmaDashboardPreview() {
     com.example.calma.ui.theme.CalmaTheme {
-        CalmaDashboardScreen(viewModel = androidx.lifecycle.viewmodel.compose.viewModel())
+        CalmaDashboardScreen(
+            viewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+            assistantViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+        )
     }
 }
 
