@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Android 12+: no se copia nada ni a la nube ni a otro equipo. La vinculación es propia de cada dispositivo. -->
+<!-- Android 12+: no se copia nada ni a la nube ni a otro equipo. La app no guarda datos. -->
 <data-extraction-rules>
     <cloud-backup>
         <exclude domain="root" />

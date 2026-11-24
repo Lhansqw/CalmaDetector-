@@ -9,7 +9,6 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.calma.pairing.PhonePairingViewModel
 import com.example.calma.ui.theme.CalmaTheme
 
 /** Único punto de entrada: en un reloj abre la interfaz de Wear OS, en el teléfono el panel. */
@@ -30,8 +29,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             CalmaTheme {
                 val viewModel: CalmaViewModel = viewModel()
-                val pairingViewModel: PhonePairingViewModel = viewModel()
-                CalmaDashboardScreen(viewModel = viewModel, pairingViewModel = pairingViewModel)
+                CalmaDashboardScreen(viewModel = viewModel)
             }
         }
     }

@@ -6,7 +6,7 @@
         android:name="android.hardware.type.watch"
         android:required="false" />
 
-    <!-- allowBackup=false: la vinculación depende de los dispositivos concretos y no debe restaurarse en otro equipo. -->
+    <!-- Sin backup: la app no guarda datos y el detector se recalibra en cada sesión. -->
     <application
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"

@@ -45,11 +45,7 @@ import com.example.calma.ui.theme.TextPrimary
 import com.example.calma.ui.theme.TextSecondary
 
 @Composable
-fun CalmaWearApp(
-    viewModel: CalmaViewModel,
-    pairedPhoneName: String? = null,
-    onUnpair: () -> Unit = {}
-) {
+fun CalmaWearApp(viewModel: CalmaViewModel) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val columnState = rememberTransformingLazyColumnState()
     val d = rememberWearDimens()
@@ -234,25 +230,6 @@ fun CalmaWearApp(
                             }
                         )
                     }
-
-                    // 7. Sesión: teléfono vinculado
-                    if (pairedPhoneName != null) {
-                        item { WearSectionHeader(d, "Sesión") }
-                        item {
-                            Text(
-                                text = "📱 Vinculado con $pairedPhoneName",
-                                fontSize = d.sp(11f),
-                                color = TextPrimary,
-                                textAlign = TextAlign.Center,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = d.textInset)
-                            )
-                        }
-                        item { WearUnpairButton(d, onUnpair = onUnpair) }
-                    }
                 }
             }
         )
@@ -278,7 +255,7 @@ internal fun WearSectionHeader(d: WearDimens, title: String) {
 @Composable
 fun CalmaWearAppPreview() {
     CalmaTheme {
-        CalmaWearApp(viewModel = androidx.lifecycle.viewmodel.compose.viewModel(), pairedPhoneName = "Pixel 8")
+        CalmaWearApp(viewModel = androidx.lifecycle.viewmodel.compose.viewModel())
     }
 }
 
@@ -286,6 +263,6 @@ fun CalmaWearAppPreview() {
 @Composable
 fun CalmaWearAppSmallPreview() {
     CalmaTheme {
-        CalmaWearApp(viewModel = androidx.lifecycle.viewmodel.compose.viewModel(), pairedPhoneName = "Pixel 8")
+        CalmaWearApp(viewModel = androidx.lifecycle.viewmodel.compose.viewModel())
     }
 }

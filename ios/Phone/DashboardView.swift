@@ -4,13 +4,11 @@ import CalmaCore
 /// Port de `CalmaDashboardScreen.kt` para iPhone.
 struct DashboardView: View {
     @ObservedObject var viewModel: CalmaViewModel
-    @ObservedObject var pairing: PhonePairingViewModel
 
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
                 header
-                WatchPairingCard(pairing: pairing)
                 StatusPulseCard(level: viewModel.currentAlert, bpmZScore: viewModel.bpmZScore)
                 metricsRow
                 baselineCard

@@ -4,8 +4,6 @@ import CalmaCore
 /// Port de `CalmaWearApp.kt` para Apple Watch.
 struct WatchDashboardView: View {
     @ObservedObject var viewModel: CalmaViewModel
-    var pairedPhoneName: String?
-    var onUnpair: () -> Void = {}
 
     var body: some View {
         NavigationStack {
@@ -54,16 +52,6 @@ struct WatchDashboardView: View {
                     Button("Fue falsa alarma") { viewModel.sendFeedback(wasAnxiety: false) }
                     Button("Restablecer estado", role: .destructive) { viewModel.resetDetector() }
                         .font(.footnote)
-                }
-
-                if let pairedPhoneName {
-                    Section("Sesión") {
-                        Text("📱 Vinculado con \(pairedPhoneName)")
-                            .font(.caption2)
-                            .foregroundStyle(Color.textPrimary)
-                        Button("Desvincular iPhone", role: .destructive, action: onUnpair)
-                            .font(.footnote)
-                    }
                 }
             }
             .navigationTitle("CalmaDetector")
@@ -137,5 +125,5 @@ struct WatchDashboardView: View {
 }
 
 #Preview {
-    WatchDashboardView(viewModel: CalmaViewModel(), pairedPhoneName: "iPhone")
+    WatchDashboardView(viewModel: CalmaViewModel())
 }

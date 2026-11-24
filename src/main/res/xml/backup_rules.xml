@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Android 11 o anterior: no se respalda nada. La vinculación es propia de cada dispositivo. -->
+<!-- Android 11 o anterior: no se respalda nada. La app no guarda datos. -->
 <full-backup-content>
     <exclude domain="root" path="." />
     <exclude domain="file" path="." />

@@ -35,27 +35,13 @@ de que se intensifique, y recomienda la respiración guiada 4-7-8. El movimiento
 - **Apple Watch**: interfaz SwiftUI nativa. Además del simulador, puede usar **sensores reales**:
   pulso en vivo con HealthKit, HRV reciente y acelerómetro. Vibra cuando se dispara una alerta.
 
-### 🔐 Inicio de sesión con código (vinculación reloj ↔ teléfono)
-Para no tener que escribir contraseñas en el reloj:
-
-1. Al abrir la app en el reloj aparece un **código de 6 dígitos** (por ejemplo `482 913`).
-2. En el teléfono, en la tarjeta **⌚ Reloj vinculado**, se escribe ese código y se pulsa **Vincular**.
-3. El reloj valida el código y abre el panel. Ambos dispositivos guardan la vinculación.
-
-Detalles:
-- Comunicación directa entre los dispositivos, sin servidor ni internet:
-  **Wearable Data Layer** (`MessageClient`) en Android y **WatchConnectivity** (`WCSession`) en Apple.
-- El código caduca a los **5 minutos**, es de **un solo uso** y se invalida tras **5 intentos fallidos**.
-- Se puede **desvincular** desde cualquiera de los dos dispositivos; el otro se entera automáticamente.
-- Si algo falla, el teléfono explica qué hacer (por ejemplo, emparejar el reloj o abrir la app en él).
-
 ---
 
 ##  Arquitectura y Tecnologías
 
 ### Android / Wear OS
-- **Lenguaje**: Kotlin 2.1.10
-- **UI**: Jetpack Compose + Material 3 (teléfono); Wear Compose Material 3 `1.0.0-alpha28` y Wear Foundation `1.5.0-alpha05` (reloj)
+- **Lenguaje**: Kotlin (integrado en AGP 9.5) y Gradle 9.9
+- **UI**: Jetpack Compose + Material 3 (teléfono); Wear Compose Material 3 y Wear Foundation `1.7.2` (reloj)
 - **Arquitectura**: MVVM con `StateFlow` y Kotlin Coroutines
 
 ### iPhone / Apple Watch
@@ -80,29 +66,21 @@ CalmaDetector/
 │   ├── detection/
 │   │   ├── StressDetector.kt       # Línea base (Welford), z-scores y clasificación de alertas
 │   │   └── Main.kt                 # Simulador de datos por consola
-│   ├── pairing/
-│   │   ├── PairingCodeManager.kt   # Genera y valida códigos de un solo uso
-│   │   ├── PairingProtocol.kt      # Mensajes reloj ↔ teléfono (Data Layer)
-│   │   ├── PairingStore.kt         # Guarda el dispositivo vinculado
-│   │   ├── WatchPairingViewModel.kt # Lado del reloj: muestra y valida el código
-│   │   └── PhonePairingViewModel.kt # Lado del teléfono: envía el código
 │   └── ui/
 │       ├── CalmaDashboardScreen.kt # Interfaz del teléfono (Material 3)
-│       ├── WatchPairingCard.kt     # Tarjeta del teléfono para introducir el código
 │       ├── CalmaWearApp.kt         # Interfaz de Wear OS (Wear Compose M3)
-│       ├── WearPairingScreen.kt    # Pantalla del reloj que muestra el código
 │       ├── WearDimens.kt           # Medidas adaptadas al tamaño de pantalla del reloj
 │       ├── CalmaViewModel.kt       # ViewModel y gestión de estado (StateFlow)
 │       ├── MainActivity.kt         # Punto de entrada único (redirige al reloj si corresponde)
-│       ├── WearActivity.kt         # Inicio de sesión + panel en Wear OS
+│       ├── WearActivity.kt         # Panel en Wear OS
 │       └── theme/                  # Colores y CalmaTheme (teléfono + reloj)
 │
 └── ios/                                     # iPhone + Apple Watch
     ├── project.yml                 # Definición del proyecto Xcode (XcodeGen)
-    ├── Packages/CalmaCore/         # Detector, códigos, protocolo y simulador (con tests)
-    ├── Shared/                     # ViewModel, WatchConnectivity y colores, comunes a ambas apps
-    ├── Phone/                      # App de iPhone (panel + tarjeta de vinculación)
-    └── Watch/                      # App de Apple Watch (código, panel y sensores HealthKit)
+    ├── Packages/CalmaCore/         # Detector y simulador (con tests)
+    ├── Shared/                     # ViewModel y colores, comunes a ambas apps
+    ├── Phone/                      # App de iPhone (panel)
+    └── Watch/                      # App de Apple Watch (panel y sensores HealthKit)
 ```
 
 ---
@@ -111,7 +89,7 @@ CalmaDetector/
 
 ### Android / Wear OS
 
-**Requisitos**: Android Studio Ladybug (2024.2) o superior, JDK 21 y un teléfono o emulador
+**Requisitos**: una versión reciente de Android Studio (compatible con AGP 9.5), el SDK de Android 37 y un teléfono o emulador
 Android 8.0+ (API 26+) y/o un reloj o emulador Wear OS 4+ (API 30+).
 
 1. Clonar el repositorio:
@@ -122,10 +100,7 @@ Android 8.0+ (API 26+) y/o un reloj o emulador Wear OS 4+ (API 30+).
 2. Abrir el proyecto en **Android Studio** y sincronizar con **Gradle Sync**.
 3. Ejecutar la configuración `app`. Hay un solo APK e icono: `MainActivity` detecta si corre en un reloj
    y abre la interfaz de Wear OS automáticamente.
-4. Para probar la vinculación con emuladores: **Tools → Device Manager → Pair Wearable** e instalar la app en ambos.
-   En dispositivos reales, el reloj debe estar emparejado con la app Wear OS / Galaxy Wearable y ambos deben
-   tener el mismo APK, firmado con la misma clave.
-5. Tests unitarios: `./gradlew testDebugUnitTest`.
+4. Tests unitarios: `./gradlew testDebugUnitTest`.
 
 ### iPhone / Apple Watch
 
@@ -148,5 +123,5 @@ Más detalles (sensores, permisos de Salud, equivalencias con Android) en [`ios/
 
 ##  Estado
 
-- **Android / Wear OS**: compila y los tests unitarios pasan (detector y códigos de vinculación).
+- **Android / Wear OS**: compila, los tests unitarios del detector pasan y lint no da errores.
 - **iPhone / Apple Watch**: código completo, pendiente de compilar y probar por primera vez en Xcode.

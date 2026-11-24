@@ -1,8 +1,7 @@
 # CalmaDetector para iPhone + Apple Watch
 
 Versión nativa en **Swift / SwiftUI** de CalmaDetector. Hace lo mismo que la app Android / Wear OS:
-mismo detector de estrés (línea base + z-score), mismo simulador de escenarios y el mismo inicio de
-sesión con código de 6 dígitos entre reloj y teléfono.
+mismo detector de estrés (línea base + z-score) y mismo simulador de escenarios.
 
 > El Apple Watch solo se empareja con un **iPhone**, así que esta versión incluye las dos apps.
 > Un Apple Watch no puede conectarse con la app Android, ni un reloj Wear OS con un iPhone.
@@ -31,25 +30,13 @@ open CalmaDetector.xcodeproj
 
 ### Probar la lógica sin Xcode
 
-El detector, los códigos de vinculación y el protocolo están en el paquete `Packages/CalmaCore`,
+El detector y el simulador están en el paquete `Packages/CalmaCore`,
 que no depende de iOS. Sus tests corren en macOS o Linux:
 
 ```bash
 cd ios/Packages/CalmaCore
 swift test
 ```
-
-## Inicio de sesión con código
-
-1. Abre CalmaDetector en el **Apple Watch**: aparece un código de 6 dígitos.
-2. En el **iPhone**, en la tarjeta **⌚ Reloj vinculado**, escribe el código y pulsa **Vincular**.
-3. El reloj lo valida, vibra y abre el panel.
-
-Igual que en Android: el código caduca a los 5 minutos, es de un solo uso y se invalida tras 5 intentos
-fallidos. Se puede desvincular desde cualquiera de los dos; el otro se entera (si no está accesible en ese
-momento, el aviso le llega después). La comunicación usa **WatchConnectivity**, sin servidor.
-
-Para enviar el código, la app del reloj tiene que estar **abierta en pantalla**.
 
 ## Datos de pulso en el reloj
 
@@ -76,23 +63,16 @@ ios/
 ├── project.yml                 # Definición del proyecto Xcode (XcodeGen)
 ├── Packages/CalmaCore/         # Lógica común, sin UI (con tests)
 │   ├── StressDetector.swift    # Port de StressDetector.kt
-│   ├── PairingCodeManager.swift
-│   ├── PairingProtocol.swift   # Mensajes reloj ↔ iPhone (JSON)
-│   ├── PairingStore.swift      # Vinculación guardada en UserDefaults
 │   └── SimulationScenario.swift
 ├── Shared/                     # Código SwiftUI usado por las dos apps
 │   ├── CalmaViewModel.swift    # Port de CalmaViewModel.kt (+ fuente de sensores)
-│   ├── ConnectivityService.swift # WatchConnectivity (equivale a la Wearable Data Layer)
 │   └── Theme.swift             # Misma paleta de colores
 ├── Phone/                      # App de iPhone
-│   ├── DashboardView.swift
-│   ├── WatchPairingCard.swift
-│   └── PhonePairingViewModel.swift
+│   ├── CalmaPhoneApp.swift
+│   └── DashboardView.swift
 └── Watch/                      # App de Apple Watch
     ├── CalmaWatchApp.swift
     ├── WatchDashboardView.swift
-    ├── WatchPairingView.swift
-    ├── WatchPairingViewModel.swift
     └── HealthSensorProvider.swift # HealthKit + acelerómetro
 ```
 
@@ -102,6 +82,4 @@ ios/
 | --- | --- |
 | Jetpack Compose / Wear Compose | SwiftUI |
 | `StateFlow` + `ViewModel` | `ObservableObject` + `@Published` |
-| Wearable Data Layer (`MessageClient`) | WatchConnectivity (`WCSession`) |
-| `SharedPreferences` | `UserDefaults` |
 | Health Services | HealthKit (`HKWorkoutSession`) |

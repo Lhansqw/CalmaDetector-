@@ -41,7 +41,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.calma.pairing.PhonePairingViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -66,12 +65,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 @Composable
-fun CalmaDashboardScreen(
-    viewModel: CalmaViewModel,
-    pairingViewModel: PhonePairingViewModel
-) {
+fun CalmaDashboardScreen(viewModel: CalmaViewModel) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val pairing by pairingViewModel.state.collectAsStateWithLifecycle()
 
     Scaffold(
         containerColor = DarkBackground
@@ -90,14 +85,6 @@ fun CalmaDashboardScreen(
                 onToggleSimulation = {
                     if (state.isSimulationRunning) viewModel.pauseSimulation() else viewModel.startSimulation()
                 }
-            )
-
-            // Vinculación con el reloj (el usuario escribe el código que muestra el reloj)
-            WatchPairingCard(
-                state = pairing,
-                onCodeChange = pairingViewModel::onCodeChange,
-                onSubmit = pairingViewModel::submitCode,
-                onUnpair = pairingViewModel::unpair
             )
 
             // Tarjeta principal de Estado con pulso animado
@@ -498,10 +485,7 @@ private fun ScenarioSimulatorCard(
 @Composable
 fun CalmaDashboardPreview() {
     com.example.calma.ui.theme.CalmaTheme {
-        CalmaDashboardScreen(
-            viewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
-            pairingViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
-        )
+        CalmaDashboardScreen(viewModel = androidx.lifecycle.viewmodel.compose.viewModel())
     }
 }
 
