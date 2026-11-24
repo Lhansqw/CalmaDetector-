@@ -1,7 +1,6 @@
 plugins {
-    id("com.android.application") version "8.7.3"
-    id("org.jetbrains.kotlin.android") version "2.1.10"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.1.10"
+    id("com.android.application") version "9.5.2"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.4.21"
 }
 
 android {
@@ -28,9 +27,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
-    }
-    kotlinOptions {
-        jvmTarget = "21"
     }
     buildFeatures {
         compose = true

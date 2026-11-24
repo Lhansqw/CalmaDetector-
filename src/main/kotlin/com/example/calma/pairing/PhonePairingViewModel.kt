@@ -88,6 +88,7 @@ class PhonePairingViewModel(app: Application) : AndroidViewModel(app),
                     null
                 }
 
+                val error = lastError
                 when {
                     success != null -> {
                         val (nodeId, result) = success
@@ -102,10 +103,9 @@ class PhonePairingViewModel(app: Application) : AndroidViewModel(app),
                             it.copy(paired = device, codeInput = "", message = "Reloj vinculado ✅", isError = false)
                         }
                     }
-                    lastError != null -> {
-                        val e = lastError!!
-                        val extra = e.attemptsLeft?.let { " (quedan $it intentos)" }.orEmpty()
-                        showError((e.error ?: "No se pudo vincular") + extra)
+                    error != null -> {
+                        val extra = error.attemptsLeft?.let { " (quedan $it intentos)" }.orEmpty()
+                        showError((error.error ?: "No se pudo vincular") + extra)
                     }
                     else -> showError("El reloj no respondió. Abre CalmaDetector en el reloj e inténtalo de nuevo.")
                 }
