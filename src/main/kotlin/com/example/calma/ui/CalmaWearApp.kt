@@ -36,7 +36,7 @@ import androidx.wear.compose.ui.tooling.preview.WearPreviewLargeRound
 import androidx.wear.compose.ui.tooling.preview.WearPreviewSmallRound
 import com.example.calma.detection.AlertLevel
 import com.example.calma.ui.theme.CalmaTheme
-import com.example.calma.ui.theme.CyanPrimary
+import com.example.calma.ui.theme.Pink
 import com.example.calma.ui.theme.DarkBackground
 import com.example.calma.ui.theme.StatusCalm
 import com.example.calma.ui.theme.StatusImminent
@@ -183,7 +183,7 @@ fun CalmaWearApp(viewModel: CalmaViewModel, assistantViewModel: AssistantViewMod
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .height(4.dp),
-                                    color = if (state.baselineReady) StatusCalm else CyanPrimary,
+                                    color = if (state.baselineReady) StatusCalm else Pink,
                                     trackColor = DarkBackground
                                 )
                             }

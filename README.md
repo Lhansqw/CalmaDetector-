@@ -19,8 +19,10 @@ de que se intensifique, y recomienda la respiración guiada 4-7-8. El movimiento
 ##  Características
 
 ###  Panel del teléfono
+- **Diseño**: rosa claro con relieve suave (neumorfismo) y 4 pestañas abajo: Inicio, Asistente, Calibración e Historial.
 - **Monitoreo en tiempo real**: BPM, HRV (ms) e indicador de movimiento.
-- **Indicador de estado animado**: pulso y colores según el estado (Calma, Estrés Leve, Ansiedad Inminente).
+- **Dial de estado animado**: marca qué tan cerca está el pulso del umbral de alerta y cambia de color según el
+  estado (verde, ámbar o rojo en tonos pastel).
 - **Línea base adaptativa**: aprende tu frecuencia cardíaca de reposo, solo con muestras sin movimiento.
 - **Simulador de escenarios**: reposo, ejercicio físico, estrés en reposo y recuperación.
 - **Calibración**: ajusta la sensibilidad según tu respuesta ("Sí, sentí ansiedad" / "Fue falsa alarma").
@@ -82,9 +84,13 @@ CalmaDetector/
 │   │   ├── AssistantPrompts.kt     # Instrucciones del asistente y contexto de la alerta
 │   │   └── CalmaAssistant.kt       # Llamada a la API de Groq
 │   └── ui/
-│       ├── CalmaDashboardScreen.kt # Interfaz del teléfono (Material 3)
-│       ├── AssistantCard.kt        # Charla con el asistente en el teléfono
+│       ├── CalmaDashboardScreen.kt # Interfaz del teléfono: encabezado y barra de pestañas
+│       ├── HomeTab.kt              # Inicio: dial de estado y métricas
+│       ├── AssistantTab.kt         # Charla con el asistente
+│       ├── CalibrationTab.kt       # Simulador, calibración y línea base
+│       ├── HistoryTab.kt           # Alertas de la sesión
 │       ├── AssistantViewModel.kt   # Estado de la charla
+│       ├── components/             # Relieve neumórfico, dial y barra de pestañas
 │       ├── CalmaWearApp.kt         # Interfaz de Wear OS (Wear Compose M3)
 │       ├── WearDimens.kt           # Medidas adaptadas al tamaño de pantalla del reloj
 │       ├── CalmaViewModel.kt       # ViewModel y gestión de estado (StateFlow)

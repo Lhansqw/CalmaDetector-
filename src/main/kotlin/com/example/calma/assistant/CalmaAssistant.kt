@@ -37,13 +37,13 @@ class CalmaAssistant(private val apiKey: String = BuildConfig.GROQ_API_KEY) {
             connection.outputStream.use { it.write(requestBody(history).toByteArray()) }
             val code = connection.responseCode
             when {
-                code == 429 -> AssistantResult.Failure("Demasiados pedidos seguidos. Probá en un rato.")
+                code == 429 -> AssistantResult.Failure("Demasiados pedidos seguidos. Prueba en un rato.")
                 code == 401 -> AssistantResult.Failure("La clave de Groq no es válida.")
                 code !in 200..299 -> AssistantResult.Failure("El servicio respondió con un error ($code).")
                 else -> parseReply(connection.inputStream.bufferedReader().use { it.readText() })
             }
         } catch (e: IOException) {
-            AssistantResult.Failure("Sin conexión. Revisá internet y reintentá.")
+            AssistantResult.Failure("Sin conexión. Revisa internet y vuelve a intentarlo.")
         } finally {
             connection.disconnect()
         }
