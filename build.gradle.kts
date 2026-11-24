@@ -31,6 +31,12 @@ android {
     buildFeatures {
         compose = true
     }
+    lint {
+        // La misma APK corre en teléfono y reloj a propósito: el teléfono usa Material 3
+        // y el reloj Wear Material 3. Play Store no acepta esta APK para Wear; para
+        // publicar habría que separar la app en módulos :phone y :wear.
+        disable += setOf("InvalidWearFeatureAttribute", "WearMaterialTheme")
+    }
 }
 
 dependencies {
